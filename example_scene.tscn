@@ -33,11 +33,12 @@ mesh = SubResource("SphereMesh_ir8f0")
 script = ExtResource("1_7kwu7")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 7, 6, 7)
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 2, 2, 2)
 environment = SubResource("Environment_8lkcy")
 script = ExtResource("1_uu7p7")
 
 [node name="SurfaceNet" parent="." instance=ExtResource("2_ek7cu")]
+visible = false
 material_override = SubResource("ORMMaterial3D_2c0fk")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
