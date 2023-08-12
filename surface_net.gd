@@ -12,46 +12,46 @@ func _ready():
 const CENTER := Vector3.ZERO;
 const RADIUS: float = 5.0;	
 
-func get_surface_distance(index: Vector3) -> float:
+func get_sample_value(index: Vector3i) -> float:
 	return RADIUS - CENTER.distance_to(index);
 
 # Step 6: Create Surface
 const AXIS := [
-	Vector3(1,0,0),	
-	Vector3(0,1,0),	
-	Vector3(0,0,1),	
+	Vector3i(1,0,0),	
+	Vector3i(0,1,0),	
+	Vector3i(0,0,1),	
 ];
 
 # The 4 relative indexes of the corners of a Quad that is orthogonal to each axis
 const QUAD_POINTS := [
 	# x axis
 	[
-		Vector3(0,0,-1),
-		Vector3(0,-1,-1),
-		Vector3(0,-1,0),
-		Vector3(0,0,0)
+		Vector3i(0,0,-1),
+		Vector3i(0,-1,-1),
+		Vector3i(0,-1,0),
+		Vector3i(0,0,0)
 	],	
 	# y axis
 	[
-		Vector3(0,0,-1),
-		Vector3(0,0,0),
-		Vector3(-1,0,0),
-		Vector3(-1,0,-1)
+		Vector3i(0,0,-1),
+		Vector3i(0,0,0),
+		Vector3i(-1,0,0),
+		Vector3i(-1,0,-1)
 	],	
 	# z axis
 	[
-		Vector3(0,0,0),
-		Vector3(0,-1,0),
-		Vector3(-1,-1,0),
-		Vector3(-1,0,0)
+		Vector3i(0,0,0),
+		Vector3i(0,-1,0),
+		Vector3i(-1,-1,0),
+		Vector3i(-1,0,0)
 	],	
 ];
 
-func create_surface_mesh_quad(index: Vector3):
+func create_surface_mesh_quad(index: Vector3i):
 	for axis_index in range(AXIS.size()):
 		var axis = AXIS[axis_index];
-		var sample_value1 = get_surface_distance(index);
-		var sample_value2 = get_surface_distance(index + axis);
+		var sample_value1 = get_sample_value(index);
+		var sample_value2 = get_sample_value(index + axis);
 		
 		var points = [
 				index + QUAD_POINTS[axis_index][0],
@@ -85,13 +85,28 @@ func add_reversed_quad(points):
 	add_vertex(points[2])
 	add_vertex(points[3])
 	
-func add_vertex(index: Vector3):
-	surfaceTool.add_vertex(index);
+func add_vertex(index: Vector3i):
+	var surface_position = get_surface_position(index);
+	surfaceTool.add_vertex(surface_position);
+	
+func get_surface_position(index: Vector3i) -> Vector3:
+	const AXIS = [Vector3i(1,0,0),Vector3i(0,1,0),Vector3i(0,0,1)]
+	var main_sample_value = get_sample_value(index);
+	var total_offset = Vector3(0,0,0);
+	
+	for axis_index in range(3):
+		var axis = AXIS[axis_index];
+		var neighbor_sample_value = get_sample_value(index + axis);
+		var ratio = (0.0 - main_sample_value) / (neighbor_sample_value - main_sample_value);
+		var offset: Vector3 = axis * ratio;
+		total_offset += offset;
+	
+	return Vector3(index) + total_offset;
 	
 func create_surface_mesh():
 	for x in range(-10, 10):
 		for y in range(-10, 10):
 			for z in range(-10, 10):
-				create_surface_mesh_quad(Vector3(x,y,z));
+				create_surface_mesh_quad(Vector3i(x,y,z));
 				
 
