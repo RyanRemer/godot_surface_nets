@@ -3,8 +3,8 @@ extends Node3D
 @onready var point_view = $PointView;
 
 func _ready():
-	var main_position = Vector3(0,0,0);
-	point_view.add_point(Vector3(0,0,0), Colors.BLUE_D);
+	var main_position = Vector3(0,1,0);
+	point_view.add_point(main_position, Colors.BLUE_D);
 	
 	var main_sample = -1.0;
 	var total_offset = Vector3(0,0,0);

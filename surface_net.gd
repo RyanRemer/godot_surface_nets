@@ -1,6 +1,7 @@
 extends MeshInstance3D
 
 var surfaceTool := SurfaceTool.new();
+@export var point_view: PointView;
 
 func _ready():
 	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLES);
@@ -87,26 +88,32 @@ func add_reversed_quad(points):
 	
 func add_vertex(index: Vector3i):
 	var surface_position = get_surface_position(index);
+	point_view.add_point(surface_position, Colors.PURPLE_A)
 	surfaceTool.add_vertex(surface_position);
 	
 func get_surface_position(index: Vector3i) -> Vector3:
-	const AXIS = [Vector3i(1,0,0),Vector3i(0,1,0),Vector3i(0,0,1)]
 	var main_sample_value = get_sample_value(index);
 	var total_offset = Vector3(0,0,0);
 	
 	for axis_index in range(3):
 		var axis = AXIS[axis_index];
 		var neighbor_sample_value = get_sample_value(index + axis);
-		var ratio = (0.0 - main_sample_value) / (neighbor_sample_value - main_sample_value);
-		var offset: Vector3 = axis * ratio;
-		total_offset += offset;
+		
+		if main_sample_value < 0 and neighbor_sample_value < 0:
+			pass;
+		elif main_sample_value >= 0 and neighbor_sample_value >= 0:
+			pass;
+		else:
+			var ratio = (0.0 - main_sample_value) / (neighbor_sample_value - main_sample_value);
+			var offset: Vector3 = axis * ratio;
+			total_offset += offset;
 	
 	return Vector3(index) + total_offset;
 	
 func create_surface_mesh():
-	for x in range(-10, 10):
-		for y in range(-10, 10):
-			for z in range(-10, 10):
+	for x in range(-5, 5):
+		for y in range(-5, 5):
+			for z in range(-5, 5):
 				create_surface_mesh_quad(Vector3i(x,y,z));
 				
 

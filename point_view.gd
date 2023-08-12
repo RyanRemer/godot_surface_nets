@@ -4,7 +4,6 @@ extends MultiMeshInstance3D
 var _count = 0;
 
 func _ready():
-	multimesh.instance_count = 100000;
 	multimesh.visible_instance_count = 0;
 
 func add_point(position: Vector3, color: Color):
