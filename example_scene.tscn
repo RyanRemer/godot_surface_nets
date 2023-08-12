@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://cnbvk1cq1jrxg"]
+
+[ext_resource type="Script" path="res://freelook_camera.gd" id="1_uu7p7"]
+[ext_resource type="PackedScene" uid="uid://coync3l2do1xu" path="res://surface_net.tscn" id="2_ek7cu"]
+
+[sub_resource type="Environment" id="Environment_8lkcy"]
+background_mode = 1
+background_color = Color(0.133333, 0.133333, 0.133333, 1)
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_2c0fk"]
+vertex_color_use_as_albedo = true
+
+[node name="ExampleScene" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 7, 6, 7)
+environment = SubResource("Environment_8lkcy")
+script = ExtResource("1_uu7p7")
+
+[node name="SurfaceNet" parent="." instance=ExtResource("2_ek7cu")]
+material_override = SubResource("ORMMaterial3D_2c0fk")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.926062, -0.296124, 0.233924, 0, 0.619875, 0.784701, -0.377372, -0.726681, 0.574042, 0, 0, 0)

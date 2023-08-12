@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://coync3l2do1xu"]
+
+[ext_resource type="Script" path="res://surface_net.gd" id="1_8nl4y"]
+
+[node name="SurfaceNet" type="MeshInstance3D"]
+script = ExtResource("1_8nl4y")
