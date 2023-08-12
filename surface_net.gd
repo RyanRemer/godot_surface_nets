@@ -68,24 +68,25 @@ func create_surface_mesh_quad(index: Vector3):
 			add_reversed_quad(points);
 
 func add_quad(points):
-	surfaceTool.add_vertex(points[0])
-	surfaceTool.add_vertex(points[2])
-	surfaceTool.add_vertex(points[1])
+	add_vertex(points[0])
+	add_vertex(points[2])
+	add_vertex(points[1])
 
-	surfaceTool.add_vertex(points[0])
-	surfaceTool.add_vertex(points[3])
-	surfaceTool.add_vertex(points[2])
-	pass;
+	add_vertex(points[0])
+	add_vertex(points[3])
+	add_vertex(points[2])
 	
 func add_reversed_quad(points):
-	surfaceTool.add_vertex(points[0])
-	surfaceTool.add_vertex(points[1])
-	surfaceTool.add_vertex(points[2])
+	add_vertex(points[0])
+	add_vertex(points[1])
+	add_vertex(points[2])
 
-	surfaceTool.add_vertex(points[0])
-	surfaceTool.add_vertex(points[2])
-	surfaceTool.add_vertex(points[3])
-	pass;
+	add_vertex(points[0])
+	add_vertex(points[2])
+	add_vertex(points[3])
+	
+func add_vertex(index: Vector3):
+	surfaceTool.add_vertex(index);
 	
 func create_surface_mesh():
 	for x in range(-10, 10):

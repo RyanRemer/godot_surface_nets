@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cnbvk1cq1jrxg"]
+[gd_scene load_steps=10 format=3 uid="uid://cnbvk1cq1jrxg"]
 
+[ext_resource type="Script" path="res://example_scene.gd" id="1_7kwu7"]
 [ext_resource type="Script" path="res://freelook_camera.gd" id="1_uu7p7"]
 [ext_resource type="PackedScene" uid="uid://coync3l2do1xu" path="res://surface_net.tscn" id="2_ek7cu"]
+[ext_resource type="Script" path="res://point_view.gd" id="3_6ydg2"]
 
 [sub_resource type="Environment" id="Environment_8lkcy"]
 background_mode = 1
@@ -10,7 +12,25 @@ background_color = Color(0.133333, 0.133333, 0.133333, 1)
 [sub_resource type="ORMMaterial3D" id="ORMMaterial3D_2c0fk"]
 vertex_color_use_as_albedo = true
 
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_lqw6q"]
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_ir8f0"]
+material = SubResource("ORMMaterial3D_lqw6q")
+radius = 0.05
+height = 0.1
+radial_segments = 8
+rings = 4
+
+[sub_resource type="MultiMesh" id="MultiMesh_c7cmk"]
+transform_format = 1
+use_colors = true
+visible_instance_count = 0
+mesh = SubResource("SphereMesh_ir8f0")
+
 [node name="ExampleScene" type="Node3D"]
+script = ExtResource("1_7kwu7")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 7, 6, 7)
@@ -22,3 +42,7 @@ material_override = SubResource("ORMMaterial3D_2c0fk")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.926062, -0.296124, 0.233924, 0, 0.619875, 0.784701, -0.377372, -0.726681, 0.574042, 0, 0, 0)
+
+[node name="PointView" type="MultiMeshInstance3D" parent="."]
+multimesh = SubResource("MultiMesh_c7cmk")
+script = ExtResource("3_6ydg2")
