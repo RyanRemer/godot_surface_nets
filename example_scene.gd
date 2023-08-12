@@ -20,4 +20,6 @@ func _ready():
 		point_view.add_point(main_position + offset, Colors.GOLD_D);
 		point_view.add_point(main_position + axis, Colors.LIGHT_PINK);
 		
+	point_view.add_point(main_position + total_offset, Colors.GOLD_A);
+		
 	
