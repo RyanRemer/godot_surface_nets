@@ -87,33 +87,27 @@ func add_reversed_quad(points):
 	add_vertex(points[3])
 	
 func add_vertex(index: Vector3i):
-	var surface_position = get_surface_position(index);
-	point_view.add_point(surface_position, Colors.PURPLE_A)
+	var sample_value = get_sample_value(index);
+	var surface_gradient = get_surface_gradient(index, sample_value);
+	var sample_position = Vector3(index);
+	
+	var surface_position = sample_position + surface_gradient * sample_value
+	
+	surfaceTool.set_normal(surface_gradient);
 	surfaceTool.add_vertex(surface_position);
+	point_view.add_point(Vector3(surface_position), Colors.PURPLE_A)
 	
-func get_surface_position(index: Vector3i) -> Vector3:
-	var main_sample_value = get_sample_value(index);
-	var total_offset = Vector3(0,0,0);
+func get_surface_gradient(index: Vector3i, sample_value: float) -> Vector3:
+	return Vector3(
+		sample_value - get_sample_value(index + AXIS[0]),
+		sample_value - get_sample_value(index + AXIS[1]),
+		sample_value - get_sample_value(index + AXIS[2])
+	).normalized();
 	
-	for axis_index in range(3):
-		var axis = AXIS[axis_index];
-		var neighbor_sample_value = get_sample_value(index + axis);
-		
-		if main_sample_value < 0 and neighbor_sample_value < 0:
-			pass;
-		elif main_sample_value >= 0 and neighbor_sample_value >= 0:
-			pass;
-		else:
-			var ratio = (0.0 - main_sample_value) / (neighbor_sample_value - main_sample_value);
-			var offset: Vector3 = axis * ratio;
-			total_offset += offset;
-	
-	return Vector3(index) + total_offset;
-	
-func create_surface_mesh():
-	for x in range(-5, 5):
-		for y in range(-5, 5):
-			for z in range(-5, 5):
+func create_surface_mesh(size: int = 6):
+	for x in range(-size, size):
+		for y in range(-size, size):
+			for z in range(-size, size):
 				create_surface_mesh_quad(Vector3i(x,y,z));
 				
 

@@ -6,7 +6,7 @@ var _count = 0;
 func _ready():
 	multimesh.visible_instance_count = 0;
 
-func add_point(position: Vector3, color: Color):
+func add_point(point_position: Vector3, color: Color):
 	var index = _count;
 	_count += 1;
 	
@@ -17,6 +17,6 @@ func add_point(position: Vector3, color: Color):
 		return;
 	
 	multimesh.set_instance_color(index, color);
-	multimesh.set_instance_transform(index, Transform3D.IDENTITY.translated(position));
+	multimesh.set_instance_transform(index, Transform3D.IDENTITY.translated(point_position));
 	
 	multimesh.visible_instance_count += 1;
