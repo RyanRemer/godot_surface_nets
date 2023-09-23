@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://bfptquh83pcry"]
+
+[ext_resource type="Script" path="res://figures/figure_3.gd" id="1_l5avb"]
+[ext_resource type="PackedScene" uid="uid://ckyv60fee3isb" path="res://common/point_view.tscn" id="2_4a82r"]
+[ext_resource type="Environment" uid="uid://btg46q207xigc" path="res://common/environment.tres" id="3_hrdjq"]
+[ext_resource type="Script" path="res://freelook_camera.gd" id="4_p43ke"]
+
+[node name="Figure3" type="Node3D"]
+script = ExtResource("1_l5avb")
+
+[node name="PointView" parent="." instance=ExtResource("2_4a82r")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 2, 2, 2)
+environment = ExtResource("3_hrdjq")
+script = ExtResource("4_p43ke")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.926062, -0.296124, 0.233924, 0, 0.619875, 0.784701, -0.377372, -0.726681, 0.574042, 0, 0, 0)
+light_energy = 2.0
