@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=3 uid="uid://bhul7i1i1i3vk"]
+
+[ext_resource type="Environment" uid="uid://btg46q207xigc" path="res://common/environment.tres" id="1_t1h2a"]
+[ext_resource type="Script" path="res://freelook_camera.gd" id="3_gddwj"]
+[ext_resource type="Material" uid="uid://cqom2c6a6h8cb" path="res://common/surface_material.tres" id="4_mw7v8"]
+[ext_resource type="PackedScene" uid="uid://coync3l2do1xu" path="res://surface_net.tscn" id="4_x81ra"]
+[ext_resource type="Script" path="res://figures/figure_1_surface_net.gd" id="5_cgx7f"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4kho8"]
+frequency = 0.05
+
+[node name="Figure1" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.224951, 0, 0.974369, 0, 0.999999, 0, -0.97437, 0, 0.224951, 10, -1, 4)
+environment = ExtResource("1_t1h2a")
+script = ExtResource("3_gddwj")
+
+[node name="SurfaceNet" parent="." instance=ExtResource("4_x81ra")]
+material_override = ExtResource("4_mw7v8")
+script = ExtResource("5_cgx7f")
+noise = SubResource("FastNoiseLite_4kho8")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.926062, -0.296124, 0.233924, 0, 0.619875, 0.784701, -0.377372, -0.726681, 0.574042, 0, 0, 0)
+light_energy = 2.0

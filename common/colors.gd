@@ -1,7 +1,7 @@
 class_name Colors;
 extends Node
 
-# Manim Colors
+# Colors come from Manim Repo https://docs.manim.community/en/stable/_modules/manim/utils/color.html#Colors
 const BLUE_E = Color("#1C758A");
 const BLUE_D = Color("#29ABCA");
 const BLUE_C = Color("#58C4DD");

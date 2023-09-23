@@ -1,0 +1,4 @@
+[gd_resource type="ORMMaterial3D" format=3 uid="uid://cqom2c6a6h8cb"]
+
+[resource]
+vertex_color_use_as_albedo = true

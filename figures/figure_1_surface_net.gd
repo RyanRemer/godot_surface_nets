@@ -1,6 +1,7 @@
 extends MeshInstance3D
 
 var surfaceTool := SurfaceTool.new();
+@export var noise: Noise;
 
 func _ready():
 	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLES);
@@ -10,12 +11,15 @@ func _ready():
 	surfaceTool.generate_normals();
 	mesh = surfaceTool.commit();
 
-# Step 1: Define Surface Distance
-const CENTER := Vector3.ZERO;
-const RADIUS: float = 5.0;	
-
 func get_sample_value(index: Vector3i) -> float:	
-	return CENTER.distance_to(index) - RADIUS;
+	return max(abs(index.x) - 16.0, noise.get_noise_3dv(index))
+	
+func get_rect_surface_distance(index: Vector3i, size: int):
+	return max(
+		abs(index.x) - size,
+		abs(index.y) - size,
+		abs(index.z) - size
+	);
 	
 # Step 6: Create Surface
 func create_surface_mesh(size: int = 16):
@@ -69,8 +73,7 @@ func get_quad_points(index: Vector3i, axis_index: int):
 		index + QUAD_POINTS[axis_index][2],
 		index + QUAD_POINTS[axis_index][3],
 	];
-
-# Step 7 Shift the surface points and generate normals			
+		
 func add_vertex(index: Vector3i):	
 	var sample_value = get_sample_value(index);
 	var surface_position = get_surface_position(index);

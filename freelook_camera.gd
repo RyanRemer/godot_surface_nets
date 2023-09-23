@@ -57,6 +57,9 @@ func _input(event):
 				_q = event.pressed
 			KEY_E:
 				_e = event.pressed
+			KEY_R:
+				print(position);
+				print(rotation_degrees);
 
 # Updates mouselook and movement every frame
 func _process(delta):
