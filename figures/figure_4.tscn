@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://b2wm7v1cdmbqh"]
+
+[ext_resource type="PackedScene" uid="uid://ckyv60fee3isb" path="res://common/point_view.tscn" id="2_76djt"]
+[ext_resource type="Environment" uid="uid://btg46q207xigc" path="res://common/environment.tres" id="3_jfvha"]
+[ext_resource type="Script" path="res://freelook_camera.gd" id="4_f7kn6"]
+[ext_resource type="Material" uid="uid://cqom2c6a6h8cb" path="res://common/surface_material.tres" id="4_k07m5"]
+[ext_resource type="Script" path="res://figures/figure_4_mesh.gd" id="5_ipguu"]
+
+[node name="Figure4" type="Node3D"]
+
+[node name="PointView" parent="." instance=ExtResource("2_76djt")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 2, 2, 2)
+environment = ExtResource("3_jfvha")
+script = ExtResource("4_f7kn6")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.926062, -0.296124, 0.233924, 0, 0.619875, 0.784701, -0.377372, -0.726681, 0.574042, 0, 0, 0)
+light_energy = 2.0
+
+[node name="Figure4Mesh" type="MeshInstance3D" parent="."]
+material_override = ExtResource("4_k07m5")
+script = ExtResource("5_ipguu")
