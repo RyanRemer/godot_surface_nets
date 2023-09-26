@@ -1,30 +1,29 @@
 extends MeshInstance3D
 
-var surfaceTool := SurfaceTool.new();
+var surface_tool := surface_tool.new();
 
 func _ready():
-	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLES);
-	surfaceTool.set_color(Colors.BLUE_D);
-	surfaceTool.set_smooth_group(-1)
+	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES);
+	surface_tool.set_color(Colors.BLUE_D);
+	surface_tool.set_smooth_group(0)
 	create_surface_mesh();
-	surfaceTool.generate_normals();
-	mesh = surfaceTool.commit();
+	mesh = surface_tool.commit();
 
-# Step 1: Define Surface Distance
 const CENTER := Vector3.ZERO;
 const RADIUS: float = 5.0;	
 
 func get_sample_value(index: Vector3i) -> float:	
 	return CENTER.distance_to(index) - RADIUS;
 	
-# Step 6: Create Surface
-func create_surface_mesh(size: int = 16):
+## Creates a surface mesh by sampling and creating quads to divide the samples
+## size: square radius to create the mesh in
+func create_surface_mesh(size: int = 6):
 	for x in range(-size, size):
 		for y in range(-size, size):
 			for z in range(-size, size):
 				create_surface_mesh_quad(Vector3i(x,y,z));
-				
-				
+
+## Create 0-3 quads based on the sample values of the given index and it's neighboring sample points
 func create_surface_mesh_quad(index: Vector3i):
 	for axis_index in range(AXIS.size()):
 		var axis = AXIS[axis_index];
@@ -35,12 +34,18 @@ func create_surface_mesh_quad(index: Vector3i):
 			add_quad(index, axis_index);
 		elif sample_value1 >= 0 and sample_value2 < 0:
 			add_reversed_quad(index, axis_index);
-			
+
+## Constant for the positive axis directions
+const AXIS := [
+	Vector3i(1,0,0),	
+	Vector3i(0,1,0),	
+	Vector3i(0,0,1),	
+];
+
+## Create a quad using Godot's Surface Tool
 func add_quad(index: Vector3i, axis_index: int):
 	var points = get_quad_points(index, axis_index);
 	
-	surfaceTool.set_normal(AXIS[axis_index]);
-	
 	add_vertex(points[0])
 	add_vertex(points[1])
 	add_vertex(points[2])
@@ -49,10 +54,9 @@ func add_quad(index: Vector3i, axis_index: int):
 	add_vertex(points[2])
 	add_vertex(points[3])
 	
+## Create a quad with reversed faces using Godot's Surface Tool
 func add_reversed_quad(index: Vector3i, axis_index: int):
 	var points = get_quad_points(index, axis_index);
-	
-	surfaceTool.set_normal(-AXIS[axis_index]);
 	
 	add_vertex(points[0])
 	add_vertex(points[2])
@@ -62,6 +66,7 @@ func add_reversed_quad(index: Vector3i, axis_index: int):
 	add_vertex(points[3])
 	add_vertex(points[2])
 			
+## Get the indexs of the 4 points for a quad facing the direction of AXIS[axis_index]			
 func get_quad_points(index: Vector3i, axis_index: int):
 	return [
 		index + QUAD_POINTS[axis_index][0],
@@ -69,47 +74,6 @@ func get_quad_points(index: Vector3i, axis_index: int):
 		index + QUAD_POINTS[axis_index][2],
 		index + QUAD_POINTS[axis_index][3],
 	];
-
-# Step 7 Shift the surface points and generate normals			
-func add_vertex(index: Vector3i):	
-	var sample_value = get_sample_value(index);
-	var surface_position = get_surface_position(index);
-	var surface_gradient = get_surface_gradient(index, sample_value);
-	surfaceTool.add_vertex(surface_position);
-	
-func get_surface_position(index: Vector3i):
-	var total := Vector3.ZERO;
-	var surface_edge_count = 0;
-	
-	for edge_offsets in EDGES:
-		var position_a = Vector3(index + edge_offsets[0]);
-		var sample_a = get_sample_value(position_a);
-		var position_b = Vector3(index + edge_offsets[1])
-		var sample_b = get_sample_value(position_b);
-		
-		if sample_a * sample_b <= 0:
-			# if different signs
-			surface_edge_count += 1;
-			total += position_a.lerp(position_b, abs(sample_a) / (abs(sample_a) + abs(sample_b)));
-	
-	if surface_edge_count == 0:
-		return Vector3(index) + Vector3.ONE * 0.5;
-	
-	return total / surface_edge_count;
-	
-func get_surface_gradient(index: Vector3i, sample_value: float) -> Vector3:
-	return Vector3(
-		sample_value - get_sample_value(index + AXIS[0]),
-		sample_value - get_sample_value(index + AXIS[1]),
-		sample_value - get_sample_value(index + AXIS[2])
-	).normalized();	
-
-# Constants
-const AXIS := [
-	Vector3i(1,0,0),	
-	Vector3i(0,1,0),	
-	Vector3i(0,0,1),	
-];
 
 # The 4 relative indexes of the corners of a Quad that is orthogonal to each axis
 const QUAD_POINTS := [
@@ -135,8 +99,48 @@ const QUAD_POINTS := [
 		Vector3i(-1,0,0)
 	],	
 ];
+	
+## Add a vertex with Godot's Surface Tool
+func add_vertex(index: Vector3i):	
+	var sample_value = get_sample_value(index);
+	var surface_position = get_surface_position(index);
+	var surface_gradient = get_surface_gradient(index, sample_value);
+	
+	surface_tool.set_normal(surface_gradient);
+	surface_tool.add_vertex(surface_position);
+	
+## Calculate the surface position by finding the interpolated surface point for each edge
+## Then average the interpolated points, and skip any edges that have the same sign
+func get_surface_position(index: Vector3i):
+	var total := Vector3.ZERO;
+	var surface_edge_count = 0;
+	
+	for edge_offsets in EDGE_OFFSETS:
+		var position_a = Vector3(index + edge_offsets[0]);
+		var sample_a = get_sample_value(position_a);
+		var position_b = Vector3(index + edge_offsets[1])
+		var sample_b = get_sample_value(position_b);
+		
+		# if different signs
+		if sample_a * sample_b < 0:
+			surface_edge_count += 1;
+			total += position_a.lerp(position_b, abs(sample_a) / (abs(sample_a) + abs(sample_b)));
+	
+	if surface_edge_count == 0:
+		return Vector3(index) + Vector3.ONE * 0.5;
+	
+	return total / surface_edge_count;
+	
+## Calculate the surface normal by finding the slopes in the x,y,z directions of the surface 
+func get_surface_gradient(index: Vector3i, sample_value: float) -> Vector3:
+	return Vector3(
+		get_sample_value(index + AXIS[0]) - sample_value,
+		get_sample_value(index + AXIS[1]) - sample_value,
+		get_sample_value(index + AXIS[2]) - sample_value
+	).normalized();	
 
-const EDGES := [
+## All the relative offsets for the two points of all 12 edges of a unit cube
+const EDGE_OFFSETS := [
 	# Edges on min Z axis
 	[Vector3i(0,0,0),Vector3i(1,0,0)],
 	[Vector3i(1,0,0),Vector3i(1,1,0)],
