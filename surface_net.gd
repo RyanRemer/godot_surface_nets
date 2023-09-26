@@ -1,6 +1,6 @@
 extends MeshInstance3D
 
-var surface_tool := surface_tool.new();
+var surface_tool := SurfaceTool.new();
 
 func _ready():
 	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES);
